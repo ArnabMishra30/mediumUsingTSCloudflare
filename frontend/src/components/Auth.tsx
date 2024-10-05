@@ -1,13 +1,31 @@
-import React, { ChangeEvent, useState } from "react";
-import { Link } from "react-router-dom";
+import { ChangeEvent, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { SignupInput } from "@arnabmishra/medium-common";
+import axios from "axios";
+import { BACKEND_URL } from "../config";
 
 export const Auth = ({ type }: { type: "signup" | "signin" }) => {
+  const navigate = useNavigate();
   const [postInputs, setpostInputs] = useState<SignupInput>({
     name: "",
     email: "",
     password: "",
   });
+
+  async function sendRequest() {
+    try {
+      const response = await axios.post(
+        `${BACKEND_URL}/api/v1/user/${type === "signup" ? "signup" : "signin"}`,
+        postInputs
+      );
+      const jwt = response.data;
+      localStorage.setItem("token", jwt);
+      navigate("/blogs");
+    } catch (e) {
+      alert("Problem found while signing up...")
+    }
+  }
+
   return (
     <div className="h-screen flex justify-center flex-col bg-gray-50">
       {/* {JSON.stringify(postInputs)} */}
@@ -16,8 +34,13 @@ export const Auth = ({ type }: { type: "signup" | "signin" }) => {
           <div className="text-center px-10" /* added this class by mine */>
             <div className="text-4xl font-extrabold">Create an account</div>
             <div className="text-slate-400 mt-2">
-              {type === "signin" ? "Don't have an account" : "Already have an account?"}
-              <Link className="pl-2 underline" to={type === "signin" ? "/signup" : "/signin"}>
+              {type === "signin"
+                ? "Don't have an account"
+                : "Already have an account?"}
+              <Link
+                className="pl-2 underline"
+                to={type === "signin" ? "/signup" : "/signin"}
+              >
                 {type === "signin" ? "Sign Up" : "Sign In"}
               </Link>
             </div>
@@ -33,7 +56,7 @@ export const Auth = ({ type }: { type: "signup" | "signin" }) => {
                 // }))
                 setpostInputs({
                   ...postInputs, //existing name, password and email
-                  name: e.target.value,
+                  email: e.target.value,
                 });
               }}
             />
@@ -44,21 +67,24 @@ export const Auth = ({ type }: { type: "signup" | "signin" }) => {
               onchange={(e) => {
                 setpostInputs({
                   ...postInputs, //existing name, password and email
-                  name: e.target.value,
+                  password: e.target.value,
                 });
               }}
             />
-            <LabelledInput
-              label="Name"
-              placeholder="Enter Your fullname..."
-              onchange={(e) => {
-                setpostInputs({
-                  ...postInputs, //existing name, password and email
-                  name: e.target.value,
-                });
-              }}
-            />
+            {type === "signup" ? (
+              <LabelledInput
+                label="Name"
+                placeholder="Enter Your fullname..."
+                onchange={(e) => {
+                  setpostInputs({
+                    ...postInputs, //existing name, password and email
+                    name: e.target.value,
+                  });
+                }}
+              />
+            ) : null}
             <button
+              onClick={sendRequest}
               type="button"
               className="w-full mt-8 text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700"
             >
