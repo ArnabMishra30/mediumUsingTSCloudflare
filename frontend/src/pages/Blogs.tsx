@@ -1,12 +1,10 @@
-import { useBlog } from "../hooks";
-import { FullBlog } from "../components/FullBlog";
-import { useParams } from "react-router-dom";
+import { BlogCard } from "../components/BlogCard";
+import { Navbar } from "../components/Navbar";
+import { useBlogs } from "../hooks";
 
-export const Blog = () => {
-  const { id } = useParams();
-  const { loading, blog } = useBlog({
-    id: id || "",
-  });
+export const Blogs = () => {
+  const { loading, blogs } = useBlogs();
+
   if (loading) {
     return (
       <div className="flex flex-col space-y-4">
@@ -15,17 +13,22 @@ export const Blog = () => {
     );
   }
 
-  if (!blog) {
-    return (
-      <div className="text-center text-lg text-red-500">
-        Error: Blog not found.
-      </div>
-    );
-  }
-
   return (
     <div>
-      <FullBlog blog={blog} />
+      <Navbar />
+      <div className="flex justify-center">
+        <div className="max-w-xl">
+          {blogs.map((blog) => (
+            <BlogCard
+              id={blog.id}
+              authorName={blog.author.name}
+              title={blog.title}
+              content={blog.content}
+              publishedDate={"2nd july, 2024"}
+            />
+          ))}
+        </div>
+      </div>
     </div>
   );
 };
