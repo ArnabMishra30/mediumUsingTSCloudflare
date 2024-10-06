@@ -80,7 +80,7 @@ const Publish: React.FC = () => {
           <div className="flex justify-start mt-12">
             <button
               onClick={handlePublish}
-              className="bg-green-500 text-white px-4 py-2 rounded-md font-medium hover:bg-green-600 transition duration-200 hover:cursor-pointer hover:bg-green-800"
+              className="bg-green-500 text-white px-4 py-2 rounded-md font-medium transition duration-200 hover:cursor-pointer hover:bg-green-800"
             >
               Publish
             </button>
